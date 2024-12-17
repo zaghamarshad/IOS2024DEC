@@ -15,6 +15,47 @@ struct CalendarDate: Identifiable {
 }
 
 struct ContentView: View {
+    @State private var selectedTab = 0
+    
+    var body: some View {
+        TabView(selection: $selectedTab) {
+            // Study View
+            StudyView()
+                .tabItem {
+                    Image(systemName: "checklist")
+                    Text("Study")
+                }
+                .tag(0)
+            
+            // Stats View
+            Text("Stats View")
+                .tabItem {
+                    Image(systemName: "chart.line.uptrend.xyaxis")
+                    Text("Stats")
+                }
+                .tag(1)
+            
+            // Review View
+            Text("Review View")
+                .tabItem {
+                    Image(systemName: "book")
+                    Text("Review")
+                }
+                .tag(2)
+            
+            // Settings View
+            SettingView()
+                .tabItem {
+                    Image(systemName: "person")
+                    Text("Settings")
+                }
+                .tag(3)
+        }
+    }
+}
+
+// Move all the study-related content to a separate view
+struct StudyView: View {
     // State variables for tracking
     @State private var selectedTab = "All Studying"
     @State private var dayStreak = 0
@@ -23,7 +64,6 @@ struct ContentView: View {
     
     // Calendar data
     let weekDays = ["S", "M", "T", "W", "T", "F", "S"]
-    let dates = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
     
     var body: some View {
         NavigationView {
@@ -71,6 +111,18 @@ struct ContentView: View {
                     }
                     .padding(.horizontal)
                     
+                    // Calendar Navigation
+                    HStack {
+                        Button(action: previousWeek) {
+                            Image(systemName: "chevron.left")
+                        }
+                        Spacer()
+                        Button(action: nextWeek) {
+                            Image(systemName: "chevron.right")
+                        }
+                    }
+                    .padding(.horizontal)
+                    
                     // Calendar grid
                     VStack(spacing: 12) {
                         // Week days
@@ -114,9 +166,9 @@ struct ContentView: View {
                         }
                     }
                     .padding(.horizontal)
-                    .onAppear {
-                        generateCalendarDates()
-                    }
+                }
+                .onAppear {
+                    generateCalendarDates()
                 }
                 
                 // Key
@@ -171,47 +223,11 @@ struct ContentView: View {
                 .padding(.horizontal)
                 
                 Spacer()
-                
-                // Tab Bar
-                TabView(selection: $selectedTab) {
-                    // Study View (your current main view content)
-                    VStack {
-                        // Your existing content here
-                    }
-                    .tabItem {
-                        Image(systemName: "checklist")
-                        Text("Study")
-                    }
-                    .tag(0)
-                    
-                    // Stats View
-                    Text("Stats View")
-                        .tabItem {
-                            Image(systemName: "chart.line.uptrend.xyaxis")
-                            Text("Stats")
-                        }
-                        .tag(1)
-                    
-                    // Review View
-                    Text("Review View")
-                        .tabItem {
-                            Image(systemName: "book")
-                            Text("Review")
-                        }
-                        .tag(2)
-                    
-                    // Settings View
-                    SettingView()
-                        .tabItem {
-                            Image(systemName: "person")
-                            Text("Settings")
-                        }
-                        .tag(3)
-                }
             }
         }
     }
     
+    // Keep the existing helper functions
     private func generateCalendarDates() {
         let calendar = Calendar.current
         
